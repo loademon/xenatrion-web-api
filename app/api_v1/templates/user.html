@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Dashboard - Brand</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/fontawesome-all.min.css') }}">
+
+    <style>
+        .floating-div {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 1000;
+            background-color: white;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        fetch('/api/v1/user')
+            .then(response => response.json())
+            .then(data => {
+                temp_key = data[0].data.temp_key
+                var socket = io.connect('http://localhost:5000', { query: "temp_key=" + temp_key });
+                socket.on('time_event', function (data) {
+                    var readable_time = data.readable_time;
+                    var posix_time = data.posix_time;
+                    var iso_time = data.iso_time;
+                    document.getElementById('server_time').textContent = "Server Time: " + readable_time
+                    document.getElementById('posix').textContent = "Posix Time: " + posix_time
+                    document.getElementById('iso').textContent = "ISO Time: " + iso_time
+                });
+            });
+
+    </script>
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <nav class="navbar align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0 navbar-dark">
+            <div class="container-fluid d-flex flex-column p-0"><a
+                    class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+                    <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-home" style="font-size: 51px;"></i>
+                    </div>
+                    <div class="sidebar-brand-text mx-3"></div>
+                </a>
+                <hr class="sidebar-divider my-0">
+                <ul class="navbar-nav text-light" id="accordionSidebar">
+                    <li class="nav-item"><a class="nav-link active" href="/user"><i
+                                class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                </ul>
+                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0"
+                        id="sidebarToggle" type="button"></button></div>
+            </div>
+
+
+        </nav>
+        <div class="floating-div">
+            <span id="time-counter">Time Loading...</span>
+        </div>
+
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <nav class="navbar navbar-expand bg-white shadow mb-4 topbar static-top navbar-light">
+                    <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle me-3"
+                            id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button>
+                        <ul class="navbar-nav flex-nowrap ms-auto">
+                            <li class="nav-item dropdown d-sm-none no-arrow"><a class="dropdown-toggle nav-link"
+                                    aria-expanded="false" data-bs-toggle="dropdown" href="#"><i
+                                        class="fas fa-search"></i></a>
+                                <div class="dropdown-menu dropdown-menu-end p-3 animated--grow-in"
+                                    aria-labelledby="searchDropdown">
+                                    <form class="me-auto navbar-search w-100">
+                                        <div class="input-group"><input class="bg-light form-control border-0 small"
+                                                type="text" placeholder="Search for ...">
+                                            <div class="input-group-append"><button class="btn btn-primary py-0"
+                                                    type="button"><i class="fas fa-search"></i></button></div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown no-arrow">
+                                <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link"
+                                        aria-expanded="false" data-bs-toggle="dropdown" href="#"><span
+                                            class="d-none d-lg-inline me-2 text-gray-600 small"
+                                            id="account-id">{{user_id|safe}}</span></a>
+                                    <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in"><a
+                                            class="dropdown-item" href="#"><i
+                                                class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profile</a><a
+                                            class="dropdown-item" href="#"><i
+                                                class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Settings</a><a
+                                            class="dropdown-item" href="#"><i
+                                                class="fas fa-list fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Activity
+                                            log</a>
+                                        <div class="dropdown-divider"></div><a class="dropdown-item" href="#"><i
+                                                class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Logout</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <div class="container-fluid">
+                    <div class="d-sm-flex justify-content-between align-items-center mb-4">
+                        <h3 class="text-dark mb-0">Dashboard</h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="card shadow border-start-primary py-2">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col me-2">
+                                            <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>My API
+                                                    KEYS</span></div>
+                                            <div class="text-dark fw-bold h5 mb-0"><span
+                                                    id="api-count">{{api_count}}</span></div>
+                                        </div>
+                                        <div class="col-auto"><i class="fas fa-hockey-puck fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="card shadow border-start-warning py-2">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col me-2">
+                                            <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>Total
+                                                    requests</span></div>
+                                            <div class="text-dark fw-bold h5 mb-0"><span
+                                                    id="request-count">{{request_count}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto"><svg xmlns="http://www.w3.org/2000/svg" width="1em"
+                                                height="1em" viewBox="0 0 20 20" fill="none"
+                                                class="fa-2x text-gray-300">
+                                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                                    d="M3 3C2.44772 3 2 3.44772 2 4C2 4.55228 2.44772 5 3 5V13C3 14.1046 3.89543 15 5 15H7.58579L6.29289 16.2929C5.90237 16.6834 5.90237 17.3166 6.29289 17.7071C6.68342 18.0976 7.31658 18.0976 7.70711 17.7071L10 15.4142L12.2929 17.7071C12.6834 18.0976 13.3166 18.0976 13.7071 17.7071C14.0976 17.3166 14.0976 16.6834 13.7071 16.2929L12.4142 15H15C16.1046 15 17 14.1046 17 13V5C17.5523 5 18 4.55228 18 4C18 3.44772 17.5523 3 17 3H3ZM14.7071 7.70711C15.0976 7.31658 15.0976 6.68342 14.7071 6.29289C14.3166 5.90237 13.6834 5.90237 13.2929 6.29289L10 9.58579L8.70711 8.29289C8.31658 7.90237 7.68342 7.90237 7.29289 8.29289L5.29289 10.2929C4.90237 10.6834 4.90237 11.3166 5.29289 11.7071C5.68342 12.0976 6.31658 12.0976 6.70711 11.7071L8 10.4142L9.29289 11.7071C9.68342 12.0976 10.3166 12.0976 10.7071 11.7071L14.7071 7.70711Z"
+                                                    fill="currentColor"></path>
+                                            </svg></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-bottom: 150px;padding-bottom: 0px;">
+                        <div class="col-lg-6 col-xl-12 mb-4">
+                            <div class="card shadow mb-4"></div>
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="text-primary fw-bold m-0">My API Keys</h6>
+                                </div>
+                                <ul class="list-group list-group-flush" id="api-list">
+                                    {{ api_list|safe }}
+                                </ul>
+                            </div><a class="btn btn-primary btn-sm d-none d-sm-inline-block" role="button"
+                                id="generateApiKeyButton"><i
+                                    class="fas fa-download fa-sm text-white-50"></i>&nbsp;Generate New Api Key</a>
+                        </div>
+                    </div>
+                    <div class="col-md-9 col-xl-5 mb-5">
+                        <div class="card shadow border-start-success py-2">
+                            <div class="card-body">
+                                <div class="row align-items-center no-gutters">
+                                    <div class="col me-2">
+                                        <div class="text-uppercase text-success fw-bold text-xs mb-1"><span>Server
+                                                Time</span></div>
+                                        <div class="text-dark fw-bold h6 mb-0"><span id="server_time">Loading Server
+                                                Time...</span><br>
+                                            <span id="posix"></span><br>
+                                            <span id="iso"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto"><i class="fas fa-download fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/script.min.js') }}"></script>
+    <script type="text/javascript">
+        var initialSeconds = parseFloat("{{ initial_seconds }}");
+        var startTime = Date.now();
+
+        function updateTimer() {
+            var elapsedTime = Date.now() - startTime;
+            var remainingTime = Math.max(0, initialSeconds - elapsedTime / 1000);
+            var minutes = Math.floor(remainingTime / 60);
+            var seconds = Math.floor(remainingTime % 60);
+
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+
+            document.getElementById('time-counter').textContent = "Session Time: " + minutes + ":" + seconds;
+
+            if (remainingTime <= 0) {
+                clearInterval(timer);
+                alert("Session Time is Over!");
+                window.location.reload();
+            }
+        }
+
+        var timer = setInterval(updateTimer, 1000);
+    </script>
+
+
+    <script>
+
+        function generateApiKey() {
+            fetch('api/v1/api_key')
+                .then(response => response.json())
+                .then(data => {
+                    window.location.reload();
+                });
+        }
+
+        document.getElementById("generateApiKeyButton").addEventListener("click", generateApiKey);
+    </script>
+
+    <script>
+        function deleteApiKey(apiKey, liElement) {
+            fetch('api/v1/api_key', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ api_key: apiKey }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error deleting API key.');
+                    }
+                });
+        }
+
+        function approveApiKey(apiKey) {
+            fetch('api/v1/api_key', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ api_key: apiKey }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('API key approved.');
+                        window.location.reload();
+                    } else {
+                        response.data.then(data => {
+                            alert("API key was not approved for the following reason" + data.message);
+                        });
+                    }
+                });
+        }
+
+        document.getElementById("api-list").addEventListener("click", function (event) {
+            var target = event.target;
+            if (target.classList.contains("btn-danger") || target.closest(".btn-danger")) {
+                var li = target.closest("li.list-group-item");
+                if (!li) return;
+                var apiKey = li.querySelector("strong").textContent;
+                deleteApiKey(apiKey, li);
+            }
+
+            if (target.classList.contains("btn-primary") || target.closest(".btn-primary")) {
+                var li = target.closest("li.list-group-item");
+                if (!li) return;
+                var apiKey = li.querySelector("strong").textContent;
+                approveApiKey(apiKey);
+            }
+        });
+
+
+    </script>
+
+</body>
+
+</html>
