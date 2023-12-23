@@ -1,0 +1,6 @@
+Flask==3.0.0
+Flask_Login==0.6.3
+Flask_RESTful==0.3.10
+Flask_SocketIO==5.3.6
+redis==5.0.1
+Werkzeug==3.0.1

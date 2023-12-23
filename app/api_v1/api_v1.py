@@ -19,7 +19,7 @@ class Ping(Resource):
         return {"status": "success", "message": "pong!"}
 
 
-class ApıKey(Resource):
+class ApiKey(Resource):
     def get(self):
         if current_user.is_authenticated:
             api_key = token_hex(16)
@@ -173,4 +173,4 @@ class Time(Resource):
 api.add_resource(Ping, "/ping")
 api.add_resource(Time, "/time")
 api.add_resource(User, "/user")
-api.add_resource(ApıKey, "/api_key")
+api.add_resource(ApiKey, "/api_key")
